@@ -1,4 +1,4 @@
-# Sử dụng Alpine Linux để tối ưu dung lượng
+ARG VERSION=1.0
 FROM alpine:latest
 
 # Cài đặt công cụ cốt lõi
