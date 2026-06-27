@@ -1,2 +1,1 @@
-# Public-image
-Hí hí
+# Hí hí

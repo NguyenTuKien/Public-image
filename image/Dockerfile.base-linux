@@ -1,0 +1,54 @@
+# Sử dụng Base Image có sẵn systemd
+FROM ghcr.io/nestybox/ubuntu-focal-systemd:latest
+
+# Cài đặt bộ công cụ Lab Hệ thống & Hạ tầng giao diện Web
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    # Trình soạn thảo & Quản lý Terminal
+    nano vim tmux tree \
+    # Khám phá & Cấu hình mạng
+    curl wget net-tools iputils-ping iproute2 dnsutils \
+    # Giám sát & Quản lý tiến trình
+    htop lsof psmisc sysstat \
+    # Bảo mật mạng
+    netcat tcpdump nmap ufw \
+    # Tiện ích & Scripting
+    zip unzip tar jq python3 \
+    # Hạ tầng đồ họa cho trình duyệt Firefox
+    firefox xvfb fluxbox x11vnc novnc websockify \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Viết script khởi động toàn bộ stack đồ họa
+RUN echo '#!/bin/bash\n\
+export DISPLAY=:99\n\
+Xvfb :99 -screen 0 1280x720x16 &\n\
+sleep 2\n\
+fluxbox &\n\
+firefox &\n\
+x11vnc -display :99 -nopw -listen 0.0.0.0 -xkb -forever &\n\
+websockify --web /usr/share/novnc/ 8080 localhost:5900 &\n\
+wait\n\
+' > /usr/local/bin/start-gui.sh && chmod +x /usr/local/bin/start-gui.sh
+
+# Biến script trên thành một dịch vụ tự động của systemd
+RUN echo '[Unit]\n\
+Description=VNC GUI Stack for Firefox\n\
+After=network.target\n\
+\n\
+[Service]\n\
+ExecStart=/usr/local/bin/start-gui.sh\n\
+Restart=always\n\
+User=root\n\
+\n\
+[Install]\n\
+WantedBy=multi-user.target\n\
+' > /etc/systemd/system/vnc-gui.service
+
+# Kích hoạt service tự động chạy khi khởi động container
+RUN systemctl enable vnc-gui.service
+
+# Thiết lập thư mục mặc định
+WORKDIR /root/lab-linux
+
+# Mở port cho giao diện Web noVNC
+EXPOSE 8080

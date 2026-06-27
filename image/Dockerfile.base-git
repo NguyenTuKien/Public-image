@@ -1,0 +1,23 @@
+# Sử dụng Alpine Linux để tối ưu dung lượng
+FROM alpine:latest
+
+# Cài đặt công cụ cốt lõi
+RUN apk add --no-cache \
+    bash \
+    git \
+    nano \
+    vim \
+    tmux
+
+# Cấu hình danh tính Git mặc định để không bị báo lỗi khi commit lần đầu
+RUN git config --global user.name "Git Ninja" && \
+    git config --global user.email "ninja@lab.local" && \
+    git config --global init.defaultBranch main && \
+    # Bật UI màu sắc cho terminal
+    git config --global color.ui auto
+
+# Thiết lập thư mục mặc định
+WORKDIR /root/lab-git
+
+# Mặc định khởi động vào Bash
+CMD ["/bin/bash"]

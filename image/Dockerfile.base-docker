@@ -1,0 +1,6 @@
+FROM ghcr.io/nestybox/ubuntu-focal-systemd-docker:latest
+
+RUN apt-get update && \
+    apt-get install -y nano vim && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* 
