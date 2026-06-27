@@ -1,4 +1,4 @@
-# Sử dụng Base Image có sẵn systemd
+ARG VERSION=1.6
 FROM ghcr.io/nestybox/ubuntu-focal-systemd:latest
 
 # Cài đặt bộ công cụ Lab Hệ thống & Hạ tầng giao diện Web
