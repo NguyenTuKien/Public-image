@@ -1,3 +1,4 @@
+ARG VERSION=1.0
 FROM ghcr.io/nestybox/ubuntu-focal-systemd-docker:latest
 
 RUN apt-get update && \
